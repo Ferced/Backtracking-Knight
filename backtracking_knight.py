@@ -51,6 +51,7 @@ class KnightsTour():
     def draw_board(self,current_position,history,posible_moves):
         for y in range(0, self.board_height, self.tile_size):
             for x in range(0, self.board_width, self.tile_size):
+
                 #DIBUJO EL CUADRADO
                 tile_position=[int(y/70),int(x/70)]
                 tile_counter=(self.size[0]*int(y/70) + int(x/70))
@@ -96,7 +97,7 @@ class KnightsTour():
             return False
         return True
     
-    def plusAndMinusPermutations(self,items):
+    def all_permutations(self,items):
         for p in itertools.permutations(items):
             for signs in itertools.product([-1,1], repeat=len(items)):
                 yield [a*sign for a,sign in zip(p,signs)]
@@ -104,7 +105,7 @@ class KnightsTour():
     #DEVUELVE LAS 8 POSIBILIDADES PARA MOVERSE
     def find_posible_moves(self,board,current_position):
         posible_moves_list = []
-        for x in list(self.plusAndMinusPermutations([1,2])):
+        for x in list(self.all_permutations([1,2])):
             posible_moves_list.append([current_position[0]+x[0],current_position[1]+x[1]])
         posible_moves_list = ([x for x in posible_moves_list if self.jump_validation(board,x)])
         return(posible_moves_list)
@@ -116,8 +117,8 @@ class KnightsTour():
             
     #CHEQUEA SI EL TABLERO ESTA COMPLETO            
     def board_finished(self,board):
-        for square in board:
-            if -1 not in square:
+        for row in board:
+            if -1 in row:
                 return False
         return True
 
@@ -135,16 +136,13 @@ class KnightsTour():
                 posible_moves.pop(counter)
                 counter-=1
             counter+=1
-        
+        if self.board_finished(board):
+            self.print_board(board)
+            input()
         #SI NO HAY MAS MOVIMIENTOS POSIBLES
         if len(posible_moves) == 0:
             self.draw_board(current_position,history,posible_moves)
             time.sleep(self.time_between_moves)
-            if self.board_finished(board):
-                print ("----------------TABLERO TERMINADO-----------------")
-                self.print_board(board)
-                print ("----------------TABLERO TERMINADO-----------------")
-                input()
             return (False) 
 
 def main():
